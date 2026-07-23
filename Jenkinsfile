@@ -23,7 +23,7 @@ pipeline {
 
         FULL_IMAGE      = "${DOCKER_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-        TARGET_ENV      = "dev"
+       TARGET_ENV = "${env.BRANCH_NAME == 'main' ? 'prod' : 'dev'}"
     }
 
     stages {
