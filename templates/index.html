@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Booking</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 60px auto; }
+        input, button { padding: 10px; margin: 6px 0; width: 100%; box-sizing: border-box; }
+        button { background: #2563eb; color: white; border: none; cursor: pointer; }
+        #result { margin-top: 20px; padding: 12px; border-radius: 6px; }
+        .success { background: #d1fae5; color: #065f46; }
+        .failed { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <h2>Book a Hotel</h2>
+    <input id="hotel_name" placeholder="Hotel name" value="Taj Palace">
+    <input id="amount" type="number" placeholder="Amount" value="5000">
+    <button onclick="book()">Book Now</button>
+    <div id="result"></div>
+
+    <script>
+        async function book() {
+            const hotel_name = document.getElementById('hotel_name').value;
+            const amount = parseInt(document.getElementById('amount').value);
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Processing...';
+            resultDiv.className = '';
+
+            try {
+                const res = await fetch('/api/book', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({hotel_name, amount})
+                });
+                const data = await res.json();
+                resultDiv.className = data.status === 'confirmed' ? 'success' : 'failed';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                resultDiv.className = 'failed';
+                resultDiv.textContent = 'Error: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
