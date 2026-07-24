@@ -124,7 +124,7 @@ pipeline {
                 dir('gitops') {
 
                     sh """
-                    sed -i 's/tag:.*/tag: "${IMAGE_TAG}"/' charts/${IMAGE_NAME}/values-dev.yaml
+                    sed -i 's/tag:.*/tag: "${IMAGE_TAG}"/' charts/${IMAGE_NAME}/values-prod.yaml
 
                     cat charts/${IMAGE_NAME}/values-dev.yaml
                     """
