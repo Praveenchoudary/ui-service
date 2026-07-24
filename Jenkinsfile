@@ -150,7 +150,7 @@ pipeline {
 
                         git config user.email jenkins@example.com
 
-                        git add charts/${IMAGE_NAME}/values-dev.yaml
+                        git add charts/${IMAGE_NAME}/values-prod.yaml
 
                         git commit -m "Deploy ${IMAGE_NAME}:${IMAGE_TAG}" || true
 
