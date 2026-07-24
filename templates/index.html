@@ -1,45 +1,439 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Hotel Booking</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 500px; margin: 60px auto; }
-        input, button { padding: 10px; margin: 6px 0; width: 100%; box-sizing: border-box; }
-        button { background: #2563eb; color: white; border: none; cursor: pointer; }
-        #result { margin-top: 20px; padding: 12px; border-radius: 6px; }
-        .success { background: #d1fae5; color: #065f46; }
-        .failed { background: #fee2e2; color: #991b1b; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian &amp; Co. — Book your stay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #12172B;
+    --panel: #1B2340;
+    --ink-soft: #2A3357;
+    --ivory: #F3EEE3;
+    --ivory-dim: #E7E0D0;
+    --charcoal: #23262B;
+    --charcoal-soft: #6B6F76;
+    --brass: #C9A227;
+    --brass-bright: #E0B93A;
+    --sage: #5F7E64;
+    --sage-bg: #E4EBE2;
+    --rust: #A8453C;
+    --rust-bg: #F2DFDB;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: var(--charcoal);
+    background: var(--ink);
+    min-height: 100vh;
+  }
+
+  .desk {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+
+  /* ---------- Identity panel (left) ---------- */
+  .identity {
+    background: linear-gradient(160deg, var(--ink) 0%, var(--panel) 100%);
+    color: var(--ivory);
+    padding: 64px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .identity::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    bottom: -120px;
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(201,162,39,0.18);
+    border-radius: 50%;
+  }
+  .identity::before {
+    content: "";
+    position: absolute;
+    right: -40px;
+    bottom: -40px;
+    width: 280px;
+    height: 280px;
+    border: 1px solid rgba(201,162,39,0.14);
+    border-radius: 50%;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+  }
+  .brand .mark {
+    width: 28px; height: 28px;
+    border: 1px solid var(--brass);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--brass);
+    font-size: 14px;
+    transform: rotate(45deg);
+  }
+  .brand .mark span { transform: rotate(-45deg); }
+
+  .eyebrow {
+    margin-top: 72px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 11px;
+    color: var(--brass-bright);
+    font-weight: 500;
+  }
+
+  .headline {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-size: clamp(34px, 4vw, 50px);
+    line-height: 1.12;
+    margin: 18px 0 20px;
+    max-width: 9.5ch;
+  }
+
+  .sub {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(243,238,227,0.72);
+    max-width: 36ch;
+  }
+
+  .identity-footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 32px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(243,238,227,0.14);
+  }
+  .identity-footer .stat .num {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--brass-bright);
+    font-size: 15px;
+  }
+  .identity-footer .stat .label {
+    font-size: 11px;
+    color: rgba(243,238,227,0.55);
+    margin-top: 4px;
+  }
+
+  /* ---------- Booking desk (right) ---------- */
+  .booking {
+    background: var(--ivory);
+    padding: 64px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .booking-inner { max-width: 400px; margin: 0 auto; width: 100%; }
+
+  .booking h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 26px;
+    margin: 0 0 6px;
+    color: var(--charcoal);
+  }
+  .booking p.hint {
+    margin: 0 0 32px;
+    color: var(--charcoal-soft);
+    font-size: 14px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--charcoal-soft);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .field { margin-bottom: 22px; }
+
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1.5px solid #D8D0BC;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    background: #fff;
+    color: var(--charcoal);
+    transition: border-color 0.15s ease;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.16);
+  }
+
+  .amount-row {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #D8D0BC;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .amount-row:focus-within {
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.16);
+  }
+  .amount-row span {
+    padding: 0 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--charcoal-soft);
+    font-size: 14px;
+    border-right: 1.5px solid #D8D0BC;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+  }
+  .amount-row input {
+    border: none;
+    box-shadow: none !important;
+  }
+
+  button.cta {
+    width: 100%;
+    padding: 15px;
+    background: var(--ink);
+    color: var(--ivory);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s ease;
+    margin-top: 6px;
+  }
+  button.cta:hover { background: var(--panel); }
+  button.cta:active { transform: scale(0.992); }
+  button.cta:disabled { opacity: 0.6; cursor: progress; }
+
+  .result-slot { margin-top: 28px; min-height: 4px; }
+
+  /* ---------- Keycard confirmation (signature element) ---------- */
+  .keycard {
+    background: linear-gradient(155deg, var(--ink) 0%, var(--panel) 100%);
+    color: var(--ivory);
+    border-radius: 10px;
+    padding: 22px 22px 18px;
+    position: relative;
+    animation: slideIn 0.35s cubic-bezier(.2,.8,.3,1);
+    box-shadow: 0 14px 30px -12px rgba(18,23,43,0.45);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px) rotate(0deg); }
+    to { opacity: 1; transform: translateY(0) rotate(-0.6deg); }
+  }
+  .keycard.declined {
+    background: linear-gradient(155deg, #2B1917 0%, #3A211D 100%);
+  }
+
+  .keycard-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .keycard-hotel {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+  }
+  .keycard-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .keycard-badge.ok { background: var(--sage-bg); color: var(--sage); }
+  .keycard-badge.no { background: var(--rust-bg); color: var(--rust); }
+
+  .perforation {
+    border-top: 1px dashed rgba(243,238,227,0.28);
+    margin: 16px 0;
+    position: relative;
+  }
+  .perforation::before, .perforation::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    width: 12px; height: 12px;
+    background: var(--ivory);
+    border-radius: 50%;
+  }
+  .perforation::before { left: -22px; }
+  .perforation::after { right: -22px; }
+
+  .keycard-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: rgba(243,238,227,0.8);
+  }
+  .keycard-row .v {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ivory);
+  }
+
+  .keycard-msg {
+    font-size: 12.5px;
+    color: rgba(243,238,227,0.65);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 860px) {
+    .desk { grid-template-columns: 1fr; }
+    .identity { padding: 44px 32px; }
+    .booking { padding: 44px 32px; }
+    .headline { max-width: none; }
+    .identity-footer { display: none; }
+  }
+</style>
 </head>
 <body>
-    <h2>Book a Hotel</h2>
-    <input id="hotel_name" placeholder="Hotel name" value="Taj Palace">
-    <input id="amount" type="number" placeholder="Amount" value="5000">
-    <button onclick="book()">Book Now</button>
-    <div id="result"></div>
 
-    <script>
-        async function book() {
-            const hotel_name = document.getElementById('hotel_name').value;
-            const amount = parseInt(document.getElementById('amount').value);
-            const resultDiv = document.getElementById('result');
-            resultDiv.textContent = 'Processing...';
-            resultDiv.className = '';
+<div class="desk">
 
-            try {
-                const res = await fetch('/api/book', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({hotel_name, amount})
-                });
-                const data = await res.json();
-                resultDiv.className = data.status === 'confirmed' ? 'success' : 'failed';
-                resultDiv.textContent = JSON.stringify(data, null, 2);
-            } catch (e) {
-                resultDiv.className = 'failed';
-                resultDiv.textContent = 'Error: ' + e.message;
-            }
-        }
-    </script>
+  <div class="identity">
+    <div>
+      <div class="brand"><span class="mark"><span>M</span></span> Meridian &amp; Co.</div>
+      <div class="eyebrow">Concierge booking</div>
+      <h1 class="headline">Every stay, held at the door.</h1>
+      <p class="sub">Reserve a room and settle payment in one motion — confirmed instantly, held on your terms.</p>
+    </div>
+    <div class="identity-footer">
+      <div class="stat"><div class="num">03</div><div class="label">Services in this reservation</div></div>
+      <div class="stat"><div class="num">&lt;2s</div><div class="label">Typical confirmation time</div></div>
+    </div>
+  </div>
+
+  <div class="booking">
+    <div class="booking-inner">
+      <h2>Reserve your room</h2>
+      <p class="hint">We'll confirm and charge in the same step.</p>
+
+      <form id="booking-form">
+        <div class="field">
+          <label for="hotel_name">Hotel</label>
+          <input type="text" id="hotel_name" value="Taj Palace" required>
+        </div>
+        <div class="field">
+          <label for="amount">Amount due</label>
+          <div class="amount-row">
+            <span>₹</span>
+            <input type="number" id="amount" value="5000" min="1" required>
+          </div>
+        </div>
+        <button type="submit" class="cta" id="submit-btn">Confirm &amp; charge</button>
+      </form>
+
+      <div class="result-slot" id="result-slot"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const form = document.getElementById('booking-form');
+  const btn = document.getElementById('submit-btn');
+  const slot = document.getElementById('result-slot');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const hotel_name = document.getElementById('hotel_name').value;
+    const amount = parseInt(document.getElementById('amount').value, 10);
+
+    btn.disabled = true;
+    btn.textContent = 'Confirming…';
+    slot.innerHTML = '';
+
+    try {
+      const res = await fetch('/api/book', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({hotel_name, amount})
+      });
+      const data = await res.json();
+      render(data, hotel_name, amount);
+    } catch (err) {
+      slot.innerHTML = `
+        <div class="keycard declined">
+          <div class="keycard-top">
+            <div class="keycard-hotel">Connection issue</div>
+            <div class="keycard-badge no">Not sent</div>
+          </div>
+          <p class="keycard-msg">The booking service didn't respond. Check that it's running and try again.</p>
+        </div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Confirm & charge';
+    }
+  });
+
+  function render(data, hotel_name, amount) {
+    const confirmed = data.status === 'confirmed';
+    const bookingId = data.booking_id || '—';
+    const txn = data.payment && data.payment.transaction_id ? data.payment.transaction_id : '—';
+
+    if (confirmed) {
+      slot.innerHTML = `
+        <div class="keycard">
+          <div class="keycard-top">
+            <div class="keycard-hotel">${hotel_name}</div>
+            <div class="keycard-badge ok">Confirmed</div>
+          </div>
+          <div class="perforation"></div>
+          <div class="keycard-row"><span>Booking</span><span class="v">${bookingId}</span></div>
+          <div class="keycard-row"><span>Transaction</span><span class="v">${txn}</span></div>
+          <div class="keycard-row"><span>Charged</span><span class="v">₹${amount}</span></div>
+          <p class="keycard-msg">Held at the front desk. Show this confirmation on arrival.</p>
+        </div>`;
+    } else {
+      const reason = (data.payment && data.payment.reason) ? data.payment.reason.replace(/_/g,' ') : (data.reason || 'payment could not be completed');
+      slot.innerHTML = `
+        <div class="keycard declined">
+          <div class="keycard-top">
+            <div class="keycard-hotel">${hotel_name}</div>
+            <div class="keycard-badge no">Declined</div>
+          </div>
+          <div class="perforation"></div>
+          <div class="keycard-row"><span>Booking</span><span class="v">${bookingId}</span></div>
+          <div class="keycard-row"><span>Attempted</span><span class="v">₹${amount}</span></div>
+          <p class="keycard-msg">${reason}. No charge was made — try again or use a different card.</p>
+        </div>`;
+    }
+  }
+</script>
+
 </body>
 </html>
